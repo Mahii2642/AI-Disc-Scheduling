@@ -1,0 +1,42 @@
+import numpy as np
+import random
+import matplotlib.pyplot as plt
+
+# Disk parameters
+disk_size = 200  # Total cylinders in disk
+num_requests = 10  # Number of I/O requests
+
+# Generate random disk requests
+requests = np.random.randint(0, disk_size, num_requests)
+initial_head = np.random.randint(0, disk_size)
+
+# Heuristic-based approach (Shortest Seek Time First - SSTF with optimization)
+def heuristic_scheduling(requests, initial_head):
+    """Apply a heuristic approach to minimize seek time."""
+    schedule = []
+    current_head = initial_head
+    remaining_requests = set(requests)
+    
+    while remaining_requests:
+        # Choose the request with the minimum seek time
+        next_request = min(remaining_requests, key=lambda x: abs(x - current_head))
+        schedule.append(next_request)
+        remaining_requests.remove(next_request)
+        current_head = next_request
+    
+    return schedule
+
+optimized_schedule = heuristic_scheduling(requests, initial_head)
+print("Optimized Disk Scheduling Order:", optimized_schedule)
+
+# Visualization
+plt.figure(figsize=(10, 5))
+plt.plot(optimized_schedule, range(len(optimized_schedule)), marker='o', linestyle='-', color='b', label='Optimized Path')
+plt.scatter(requests, range(len(requests)), color='r', label='Requests', zorder=3)
+plt.axhline(y=0, color='g', linestyle='--', label='Initial Head Position')
+plt.xlabel("Cylinder Number")
+plt.ylabel("Order of Execution")
+plt.title("Heuristic Disk Scheduling Visualization")
+plt.legend()
+plt.grid()
+plt.show()
